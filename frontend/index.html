@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host Management</title>
+  <!-- Bootstrap CSS and Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+  <div class="container my-4">
+    <!-- Backend API connection alert -->
+    <div id="apiAlert" class="alert alert-warning alert-dismissible fade show d-none" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      <strong>Warning:</strong> Could not connect to the Python API (<code>http://localhost:8000</code>). Make sure the FastAPI server is running.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Form card -->
+    <div class="card p-4 shadow-sm bg-white mb-4">
+      <h3 class="card-title mb-3 fs-4 text-primary">
+        <i class="bi bi-pc-display me-2"></i>Register New Host
+      </h3>
+      
+      <form id="hostForm" class="needs-validation" novalidate>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="hostHostname" class="form-label fw-semibold">Hostname</label>
+            <input type="text" id="hostHostname" class="form-control" placeholder="e.g. host1" required>
+          </div>
+          <div class="col-md-4">
+            <label for="hostManufacturer" class="form-label fw-semibold">Manufacturer</label>
+            <input type="text" id="hostManufacturer" class="form-control" placeholder="e.g. Dell" required>
+          </div>
+          <div class="col-md-4">
+            <label for="hostModel" class="form-label fw-semibold">Model</label>
+            <input type="text" id="hostModel" class="form-control" placeholder="e.g. PowerEdge R740" required>
+          </div>
+
+          <div class="col-md-4">
+            <label for="hostCpu" class="form-label fw-semibold">CPU</label>
+            <input type="text" id="hostCpu" class="form-control" placeholder="e.g. Intel Xeon E5-2698 v4" required>
+          </div>
+          <div class="col-md-2">
+            <label for="hostCpuCount" class="form-label fw-semibold">CPU Count</label>
+            <input type="number" id="hostCpuCount" class="form-control" min="1" value="1" required>
+          </div>
+          <div class="col-md-3">
+            <label for="hostRam" class="form-label fw-semibold">RAM</label>
+            <input type="text" id="hostRam" class="form-control" placeholder="e.g. 32GB" required>
+          </div>
+          <div class="col-md-3">
+            <label for="hostDisk" class="form-label fw-semibold">Disk</label>
+            <input type="text" id="hostDisk" class="form-control" placeholder="e.g. 1TB" required>
+          </div>
+
+          <div class="col-md-3">
+            <label for="hostStorageType" class="form-label fw-semibold">Storage Type</label>
+            <select id="hostStorageType" class="form-select" required>
+              <option value="" disabled selected>Select...</option>
+              <option value="SSD">SSD</option>
+              <option value="HDD">HDD</option>
+              <option value="NVMe">NVMe</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label for="hostInterfaces" class="form-label fw-semibold">Interfaces</label>
+            <input type="text" id="hostInterfaces" class="form-control" placeholder="e.g. Ethernet, iSCSI" required>
+          </div>
+          <div class="col-md-3">
+            <label for="hostIps" class="form-label fw-semibold">IPs</label>
+            <input type="text" id="hostIps" class="form-control" placeholder="e.g. 192.168.1.10" required>
+          </div>
+          <div class="col-md-3">
+            <label for="hostLocation" class="form-label fw-semibold">Location</label>
+            <input type="text" id="hostLocation" class="form-control" placeholder="e.g. Room A" required>
+          </div>
+
+          <div class="col-12 text-end mt-4">
+            <button type="reset" class="btn btn-outline-secondary me-2">Clear</button>
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-plus-circle me-1"></i>Add Host
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Hosts table -->
+    <div class="card p-4 shadow-sm bg-white">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="card-title fs-4 text-secondary mb-0">Registered Hosts</h3>
+        <span class="badge bg-primary fs-6" id="hostCounter">Total: 0 hosts</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle text-nowrap" id="hostsTable">
+          <thead class="table-dark">
+            <tr>
+              <th>Hostname</th>
+              <th>Manufacturer</th>
+              <th>Model</th>
+              <th>CPU</th>
+              <th>CPU Count</th>
+              <th>RAM</th>
+              <th>Disk</th>
+              <th>Storage Type</th>
+              <th>Interfaces</th>
+              <th>IPs</th>
+              <th>Location</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="hostsTableBody">
+            <!-- Rows dynamically loaded from the Python API -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap and custom JS scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

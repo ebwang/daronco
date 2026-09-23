@@ -1,0 +1,603 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Host and User Management API (PostgreSQL + ORM + Alembic)",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/users": {
+      "get": {
+        "summary": "List Users",
+        "description": "Returns every user along with their associated hosts.",
+        "operationId": "list_users_api_users_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Users Api Users Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create User",
+        "description": "Registers a new user in the PostgreSQL database.",
+        "operationId": "create_user_api_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserSimpleResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "summary": "Get User By Id",
+        "description": "Returns the details of a specific user by id.",
+        "operationId": "get_user_by_id_api_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete User",
+        "description": "Deletes a user by id (their associated hosts are removed in cascade).",
+        "operationId": "delete_user_api_users__user_id__delete",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/hosts": {
+      "get": {
+        "summary": "List Hosts",
+        "description": "Returns every host registered through the SQLAlchemy ORM.",
+        "operationId": "list_hosts_api_hosts_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/HostResponse"
+                  },
+                  "type": "array",
+                  "title": "Response List Hosts Api Hosts Get"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Host",
+        "description": "Inserts a new host in PostgreSQL through the ORM.\nWhen 'user_id' is provided, it validates that the user exists.",
+        "operationId": "create_host_api_hosts_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HostCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HostResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/hosts/{host_id}": {
+      "delete": {
+        "summary": "Delete Host",
+        "description": "Removes a host by id from PostgreSQL through the ORM.",
+        "operationId": "delete_host_api_hosts__host_id__delete",
+        "parameters": [
+          {
+            "name": "host_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Host Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HostCreate": {
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "title": "Hostname",
+            "example": "host1"
+          },
+          "manufacturer": {
+            "type": "string",
+            "title": "Manufacturer",
+            "example": "Dell"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "example": "PowerEdge R740"
+          },
+          "cpu": {
+            "type": "string",
+            "title": "Cpu",
+            "example": "Intel Xeon E5-2698 v4"
+          },
+          "cpu_count": {
+            "type": "integer",
+            "title": "Cpu Count",
+            "example": 2
+          },
+          "ram": {
+            "type": "string",
+            "title": "Ram",
+            "example": "32GB"
+          },
+          "disk": {
+            "type": "string",
+            "title": "Disk",
+            "example": "1TB"
+          },
+          "storage_type": {
+            "type": "string",
+            "title": "Storage Type",
+            "example": "SSD"
+          },
+          "interfaces": {
+            "type": "string",
+            "title": "Interfaces",
+            "example": "Ethernet, iSCSI"
+          },
+          "ips": {
+            "type": "string",
+            "title": "Ips",
+            "example": "192.168.1.10"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location",
+            "example": "Room A"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "example": 1
+          }
+        },
+        "type": "object",
+        "required": [
+          "hostname",
+          "manufacturer",
+          "model",
+          "cpu",
+          "cpu_count",
+          "ram",
+          "disk",
+          "storage_type",
+          "interfaces",
+          "ips",
+          "location"
+        ],
+        "title": "HostCreate"
+      },
+      "HostResponse": {
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "title": "Hostname",
+            "example": "host1"
+          },
+          "manufacturer": {
+            "type": "string",
+            "title": "Manufacturer",
+            "example": "Dell"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "example": "PowerEdge R740"
+          },
+          "cpu": {
+            "type": "string",
+            "title": "Cpu",
+            "example": "Intel Xeon E5-2698 v4"
+          },
+          "cpu_count": {
+            "type": "integer",
+            "title": "Cpu Count",
+            "example": 2
+          },
+          "ram": {
+            "type": "string",
+            "title": "Ram",
+            "example": "32GB"
+          },
+          "disk": {
+            "type": "string",
+            "title": "Disk",
+            "example": "1TB"
+          },
+          "storage_type": {
+            "type": "string",
+            "title": "Storage Type",
+            "example": "SSD"
+          },
+          "interfaces": {
+            "type": "string",
+            "title": "Interfaces",
+            "example": "Ethernet, iSCSI"
+          },
+          "ips": {
+            "type": "string",
+            "title": "Ips",
+            "example": "192.168.1.10"
+          },
+          "location": {
+            "type": "string",
+            "title": "Location",
+            "example": "Room A"
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "example": 1
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hostname",
+          "manufacturer",
+          "model",
+          "cpu",
+          "cpu_count",
+          "ram",
+          "disk",
+          "storage_type",
+          "interfaces",
+          "ips",
+          "location",
+          "id"
+        ],
+        "title": "HostResponse"
+      },
+      "UserCreate": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "example": "Doe"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "example": "jdoe"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "example": "123 Main Street - NY"
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "username",
+          "address"
+        ],
+        "title": "UserCreate"
+      },
+      "UserResponse": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "example": "Doe"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "example": "jdoe"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "example": "123 Main Street - NY"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "hosts": {
+            "items": {
+              "$ref": "#/components/schemas/HostResponse"
+            },
+            "type": "array",
+            "title": "Hosts",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "username",
+          "address",
+          "id",
+          "created_at"
+        ],
+        "title": "UserResponse"
+      },
+      "UserSimpleResponse": {
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "title": "First Name",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "title": "Last Name",
+            "example": "Doe"
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "example": "jdoe"
+          },
+          "address": {
+            "type": "string",
+            "title": "Address",
+            "example": "123 Main Street - NY"
+          },
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "first_name",
+          "last_name",
+          "username",
+          "address",
+          "id",
+          "created_at"
+        ],
+        "title": "UserSimpleResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

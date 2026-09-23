@@ -1,0 +1,10 @@
+# Development and test dependencies (NOT installed in the production image,
+# because the Dockerfile only installs requirements.txt).
+-r requirements.txt
+
+pytest>=8.4
+# The starlette 1.6 test client requires the httpx2 package.
+# If httpx2 is not available in your environment, install httpx>=0.27 instead
+# (the TestClient still works, emitting only a deprecation warning).
+httpx2>=2.13.0
+pytest-cov>=6.0

@@ -1,0 +1,9 @@
+# Files that must not be shipped inside the API production image.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+tests/
+requirements-dev.txt
+pytest.ini
